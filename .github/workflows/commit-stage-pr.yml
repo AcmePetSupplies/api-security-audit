@@ -1,0 +1,29 @@
+name: Commit Stage Pull Request Workflow
+
+on: 
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  checks: write
+
+jobs:
+
+  commit-stage-security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout out pr branch
+        uses: actions/checkout@v3
+      - name: View working folder
+        run:  tree
+      - name: "Run OpenAPI security audit"
+        uses: 42Crunch/api-security-audit-action@v3
+        with:
+          api-token: ${{ secrets.CRUNCH_API_TOKEN }}
+          min-score: 75
+          default-collection-name: api-security-audit
+          log-level: DEBUG
+          root-directory: api-definitions
+
